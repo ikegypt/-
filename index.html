@@ -43,7 +43,7 @@
             overflow-x: hidden;
         }
 
-        /* كلمة IK باللون الأحمر يمين ويسار الخلفية - تظهر على الكمبيوتر والموبايل */
+        /* كلمة IK باللون الأحمر يمين ويسار الخلفية */
         body::before, body::after {
             position: fixed;
             top: 50%;
@@ -180,12 +180,21 @@
             display: block;
         }
 
+        /* تعديل الهيكل لمنع اللغبطة أثناء التقاط الصورة */
         .result-status {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 900;
             color: #ffffff;
-            margin: 10px 0;
-            letter-spacing: 0.5px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            direction: rtl; /* إجبار الاتجاه من اليمين لليسار */
+        }
+
+        .status-emoji {
+            display: inline-block;
         }
 
         .song-suggestion {
@@ -202,6 +211,7 @@
             justify-content: center;
             gap: 8px;
             line-height: 1.4;
+            direction: rtl;
         }
 
         .card-footer-brand {
@@ -223,8 +233,7 @@
             font-weight: 700;
         }
 
-        /* تعديل زرار الشير الذكي */
-        .btn-share-insta { 
+        .btn-share-post { 
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
             color: white; 
             margin-top: 20px; 
@@ -255,7 +264,7 @@
 
 <div class="container">
     <h1>مُحلل الأوت فيت من <span class="brand">IK</span></h1>
-    <p class="subtitle">ارفع صورتك بالطقم كامل.. وشوف الأغنية التريند اللي تليق على الاستوري بتاعك! 👑✨</p>
+    <p class="subtitle">ارفع صورتك بالطقم كامل.. وشوف الأغنية التريند اللي تليق على حسابك! 👑✨</p>
 
     <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
         <i class="fa-solid fa-cloud-arrow-up" id="uploadIcon"></i>
@@ -273,6 +282,7 @@
         <div class="share-card" id="captureCard">
             <img id="shareImg" class="share-card-img" src="#" alt="صورة العميل">
             
+            <!-- تم تعديل طريقة عرض النص والإيموجي لمنع التداخل واللغبطة -->
             <div class="result-status" id="resultStatus"></div>
             
             <div class="song-suggestion" id="songSuggestion">
@@ -286,25 +296,25 @@
             </div>
         </div>
 
-        <!-- زر الشير الذكي الجديد للموبايل -->
-        <button class="btn btn-share-insta" onclick="shareToInstagramStory()">
+        <button class="btn btn-share-post" onclick="shareAsInstagramPost()">
             <i class="fa-brands fa-instagram"></i>
-            تحميل الكارت وفتح استوري إنستغرام 🚀
+            تحميل الكارت ونشر بوست إنستغرام 🚀
         </button>
-        <div class="toast-msg" id="toastMsg">تم تحميل الكارت ونَسخ المنشن تلقائياً! اضغط Paste في الاستوري 📋</div>
+        <div class="toast-msg" id="toastMsg">تم التحميل ونَسخ وصف البوست! اضغط Paste عند النشر 📋</div>
 
     </div>
 </div>
 
 <script>
+    // فصلنا النص الصافي عن الإيموجي عشان نمررها للـ HTML بشكل سليم ومنفصل
     const outfitTracks = [
-        { status: "كاريزما طاغية! 🔥", song: "نزلها استوري حالاً على أغنية « ملوك الشياكة » واعمل منشن لـ IK", rawSong: "ملوك الشياكة" },
-        { status: "شياكة متكاملة! 👑", song: "مكانها الاستوري فوراً على أغنية « حتة تانية » ونوّر الأكونت", rawSong: "حتة تانية" },
-        { status: "رايق ووجاهة! 😎", song: "شير استوري سريع على تريند « البرازيل » واقفل اللعبة", rawSong: "البرازيل" },
-        { status: "فخامة وبساطة! ✨", song: "تليق جداً استوري على أغنية « وسع وسع » وفرجهم الأناقة", rawSong: "وسع وسع" },
-        { status: "حضور سينمائي! 🎬", song: "اطلع بيها استوري على أغنية « ثابت » وخلي الأداء يتكلم", rawSong: "ثابت" },
-        { status: "إطلالة عالمية! 🌟", song: "مكانها استوري رايق على أغنية « الغزالة رايقة » وعيش المود", rawSong: "الغزالة رايقة" },
-        { status: "تنسيق عبقري! 🎯", song: "نزلها استوري حالاً على تريند « اختياراتي » واكتسح الشياكة", rawSong: "اختياراتي" }
+        { text: "كاريزما طاغية!", emoji: "🔥", song: "نزلها بوست حالاً على أغنية « ملوك الشياكة » واعمل منشن لـ IK", rawSong: "ملوك الشياكة" },
+        { text: "شياكة متكاملة!", emoji: "👑", song: "مكانها بوست فوراً على أغنية « حتة تانية » ونوّر الأكونت", rawSong: "حتة تانية" },
+        { text: "رايق ووجاهة!", emoji: "😎", song: "انشر بوست سريع على تريند « البرازيل » واقفل اللعبة", rawSong: "البرازيل" },
+        { text: "فخامة وبساطة!", emoji: "✨", song: "تليق جداً بوست على أغنية « وسع وسع » وفرجهم الأناقة", rawSong: "وسع وسع" },
+        { text: "حضور سينمائي!", emoji: "🎬", song: "اطلع بيها بوست على أغنية « ثابت » وخلي الأداء يتكلم", rawSong: "ثابت" },
+        { text: "إطلالة عالمية!", emoji: "🌟", song: "مكانها بوست رايق على أغنية « الغزالة رايقة » وعيش المود", rawSong: "الغزالة رايقة" },
+        { text: "تنسيق عبقري!", emoji: "🎯", song: "نزلها بوست حالاً على تريند « اختياراتي » واكتسح الشياكة", rawSong: "اختياراتي" }
     ];
 
     let currentTrack = {};
@@ -337,7 +347,7 @@
         const songName = document.getElementById('songName');
         
         resultCardWrapper.style.display = 'block';
-        resultStatus.innerHTML = 'چاري ضبط الإيقاع... ⏳';
+        resultStatus.innerHTML = '<span>چاري ضبط الإيقاع... ⏳</span>';
         document.getElementById('songSuggestion').style.display = 'none';
         document.getElementById('toastMsg').style.display = 'none';
 
@@ -345,40 +355,36 @@
             const randomIndex = Math.floor(Math.random() * outfitTracks.length);
             currentTrack = outfitTracks[randomIndex];
             
-            resultStatus.innerHTML = currentTrack.status;
+            // حقن النص والإيموجي في عناصر منفصلة تماماً لحل مشكلة الإسكرين
+            resultStatus.innerHTML = `<span>${currentTrack.text}</span> <span class="status-emoji">${currentTrack.emoji}</span>`;
             songName.innerText = currentTrack.song;
             document.getElementById('songSuggestion').style.display = 'flex';
         }, 1000);
     }
 
-    // الدالة الذكية لدمج التحميل، النسخ، وفتح إنستغرام
-    function shareToInstagramStory() {
+    function shareAsInstagramPost() {
         const captureArea = document.getElementById('captureCard');
         const toastMsg = document.getElementById('toastMsg');
 
-        // 1. نسخ الكابشن والمنشن تلقائياً للحافظة
-        const textToCopy = `Outfit: ${currentTrack.status} 👑\nOn Song: ${currentTrack.rawSong} 🎵\n@ikegypt`;
+        const textToCopy = `Outfit Check: ${currentTrack.text} ${currentTrack.emoji}\nTrack: ${currentTrack.rawSong} 🎵\n@ikegypt #IK_Brand #OutfitStyle`;
         navigator.clipboard.writeText(textToCopy).then(() => {
             toastMsg.style.display = 'block';
         }).catch(err => {
-            console.log('Clipboard err', err);
+            console.log('Clipboard error', err);
         });
 
-        // 2. تصوير الكارت وتحميله للجهاز
         html2canvas(captureArea, {
             backgroundColor: '#141414',
-            scale: 2
+            scale: 2,
+            useCORS: true // لضمان معالجة الصور والنصوص بأمان
         }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'IK-Outfit.png';
+            link.download = 'IK-Outfit-Post.png';
             link.href = canvas.toDataURL();
             link.click();
             
-            // 3. توجيه العميل لكاميرا ستوري إنستغرام فوراً بعد التحميل بـ 1.5 ثانية
             setTimeout(() => {
-                window.location.href = "instagram://story-camera";
-                
-                // خطة بديلة لو التطبيق مش نازل يفتح اللينك العادي
+                window.location.href = "instagram://camera";
                 setTimeout(() => {
                     if (!document.hidden) {
                         window.open("https://www.instagram.com/", "_blank");
